@@ -7,10 +7,16 @@ import { Customer } from '../model/customer_model';
   providedIn: 'root',
 })
 export class CustomerService {
-  constructor(private http:HttpClient) {
+  backendHost: string = 'http://localhost:8085';
+  constructor(private http: HttpClient) {}
+
+  public getCustomers(): Observable<Array<Customer>> {
+    return this.http.get<Array<Customer>>(this.backendHost+'/customers');
   }
 
-  public getCustomers(): Observable<Array<Customer>>{
-    return this.http.get<Array<Customer>>("http://localhost:8085/customers");
+  public searchCustomers(keyword: string): Observable<Array<Customer>> {
+    return this.http.get<Array<Customer>>(
+      this.backendHost+'/customers/search?keyword=' + keyword,
+    );
   }
 }

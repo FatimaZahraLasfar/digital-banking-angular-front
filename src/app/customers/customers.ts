@@ -24,15 +24,16 @@ export class Customers implements OnInit {
     this.searchFormGroup = this.fb.group({
       keyword: this.fb.control(null),
     });
-    this.customers = this.customerService.getCustomers().pipe(
+    this.handleSearchCustomer();
+  }
+
+  handleSearchCustomer() {
+    let kw = this.searchFormGroup?.value.keyword;
+    this.customers = this.customerService.searchCustomers(kw).pipe(
       catchError((err) => {
         this.errorMessage = err;
         return throwError(err);
       }),
     );
-  }
-
-  handleSearchCustomer() {
-    let kw = this.searchFormGroup?.value.keyword;
   }
 }
