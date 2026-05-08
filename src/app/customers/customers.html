@@ -1,8 +1,18 @@
 <div class="container mt-2">
-  <ng-container *ngIf="customers | async as listCutomers; else failure">
+  <ng-container *ngIf="customers | async as listCutomers; else failureOrLoading">
     <div class="card" >
       <div class="card-header">Customers</div>
       <div class="card-body">
+        <div *ngIf="searchFormGroup">
+          <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchCustomer()">
+            <div class="input-group">
+              <label class="input-group-text">Kayword : </label>
+              <input type="text" formControlName="keyword" class="form-control">
+              <button class="btn btn-info">Search</button>
+            </div>
+          </form>
+        </div>
+
         <table class="table">
           <thead>
           <tr>
@@ -22,9 +32,14 @@
       </div>
     </div>
     </ng-container>
-  <ng-template #failure>
-    <div  class="text-danger">
-      {{errorMessage}}
-    </div>
+  <ng-template #failureOrLoading>
+    <ng-container *ngIf="errorMessage; else loading">
+      <div  class="text-danger">
+        {{errorMessage}}
+      </div>
+    </ng-container>
+    <ng-template #loading>
+      Loading ..........
+    </ng-template>
   </ng-template>
 </div>
