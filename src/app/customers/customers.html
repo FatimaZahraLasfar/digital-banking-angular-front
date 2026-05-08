@@ -1,4 +1,5 @@
 <div class="container mt-2">
+  <ng-container *ngIf="customers | async as listCutomers; else failure">
     <div class="card" >
       <div class="card-header">Customers</div>
       <div class="card-body">
@@ -11,19 +12,19 @@
           </tr>
           </thead>
           <tbody>
-            @for (customer of customers; track customer.id) {
-              <tr>
-                <td>{{ customer.id }}</td>
-                <td>{{ customer.name }}</td>
-                <td>{{ customer.email }}</td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="3" class="text-center">No customers found</td>
-              </tr>
-            }
+          <tr *ngFor="let c of customers | async">
+            <td>{{c.id}}</td>
+            <td>{{c.name}}</td>
+            <td>{{c.email}}</td>
+          </tr>
           </tbody>
         </table>
       </div>
     </div>
+    </ng-container>
+  <ng-template #failure>
+    <div  class="text-danger">
+      {{errorMessage}}
+    </div>
+  </ng-template>
 </div>

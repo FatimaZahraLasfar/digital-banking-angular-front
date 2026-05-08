@@ -1,24 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { CommonModule } from '@angular/common';  // 👈 Import CommonModule
+import { CustomerService } from '../services/customer-service';
+import { Customer } from '../model/customer_model';
 
 @Component({
   selector: 'app-customers',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './customers.html',
   styleUrl: './customers.css',
 })
 export class Customers implements OnInit {
-  customers: any;
-  constructor(private http: HttpClient) {}
+  customers!: Observable<Array<Customer>>;
+  errorMessage! : String;
+  constructor(private customerService: CustomerService) {}
 
   ngOnInit() {
-    this.http.get('http://localhost:8085/customers').subscribe({
-      next: (data) => {
-        this.customers = data;
-      },
-      error: (error) => {
-        console.log(error);
-      },
-    });
+    this.customers = this.customerService.getCustomers().pipe(
+      catchError(err => {
+        this.errorMessage = err;
+        return throwError(err);
+      })
+    );
   }
 }
