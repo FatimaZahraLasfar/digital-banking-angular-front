@@ -10,7 +10,7 @@ import { AuthService } from '../security/auth.service';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
-export class NavbarComponent implements OnInit {
+export class Navbar implements OnInit {
   username = '';
 
   constructor(
