@@ -3,12 +3,13 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {Router} from "@angular/router";
 import { CustomerService } from '../services/customer-service';
 import { Customer } from '../model/customer_model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-new-customer',
   templateUrl: './new-customer.html',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   styleUrls: ['./new-customer.css'],
 })
 export class NewCustomer implements OnInit {

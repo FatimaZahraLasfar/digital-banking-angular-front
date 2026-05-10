@@ -4,13 +4,21 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { AccountsService } from '../services/accounts.service';
 import { AccountDetails } from '../model/account.model';
 import { AsyncPipe, CommonModule, DatePipe, DecimalPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.html',
-  standalone : true,
+  standalone: true,
   styleUrls: ['./accounts.css'],
-  imports: [CommonModule, ReactiveFormsModule ,AsyncPipe, DecimalPipe, DatePipe, NgClass, NgIf, NgForOf],
+  imports: [
+    RouterModule,CommonModule,
+    ReactiveFormsModule,
+    AsyncPipe,
+    DecimalPipe,
+    DatePipe,
+    NgClass,
+  ],
 })
 export class Accounts implements OnInit {
   accountFormGroup!: FormGroup;
@@ -56,7 +64,7 @@ export class Accounts implements OnInit {
       return;
     }
     this.errorMessage = '';
-    this.currentPage = 0; // ✅ Reset page when searching a new account
+    this.currentPage = 0;
     this.accountObservable = this.accountService
       .getAccount(accountId, this.currentPage, this.pageSize)
       .pipe(
@@ -89,7 +97,7 @@ export class Accounts implements OnInit {
     if (operationType === 'DEBIT') {
       this.accountService.debit(accountId, amount, description).subscribe({
         next: () => {
-          alert('Success Debit'); // ✅ Fixed
+          alert('Success Debit');
           this.operationFormGroup.reset();
           this.handleSearchAccount();
         },
