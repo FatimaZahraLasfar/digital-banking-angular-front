@@ -1,54 +1,68 @@
-<div class="container mt-2">
-  <ng-container *ngIf="customers | async as listCustomers; else failureOrLading">
-    <div class="card">
-      <div class="card-header">Customers</div>
-      <div class="card-body">
-        <div *ngIf="searchFormGroup">
-          <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchCustomers()">
-            <div class="input-group">
-              <label class="input-group-text">Keyword :</label>
-              <input type="text" formControlName="keyword" class="form-control">
-              <button class="btn btn-info">
-                <i class="bi bi-search"></i>
-              </button>
-            </div>
-          </form>
-        </div>
-        <table class="table">
-          <thead>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold"><i class="bi bi-people-fill me-2 text-primary"></i>Customers</h3>
+    @if (authService.isAdmin()) {
+      <a routerLink="/new-customer" class="btn btn-primary">
+        <i class="bi bi-person-plus-fill me-1"></i>New Customer
+      </a>
+    }
+  </div>
+
+  <!-- Search bar -->
+  <div class="input-group mb-4">
+    <span class="input-group-text"><i class="bi bi-search"></i></span>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search by name..."
+      [(ngModel)]="searchKeyword"
+      (input)="searchCustomers()"
+    />
+  </div>
+
+  <!-- Table -->
+  @if (customers.length > 0) {
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle">
+        <thead class="table-primary">
           <tr>
-            <th>ID</th><th>Name</th><th>Email</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th class="text-center">Actions</th>
           </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let c of customers | async">
-            <td>{{c.id}}</td>
-            <td>{{c.name}}</td>
-            <td>{{c.email}}</td>
-            <td>
-              <button (click)="handleDeleteCustomer(c)" class="btn btn-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-            <td>
-              <button (click)="handleCustomerAccounts(c)" class="btn btn-success">
-                Accounts
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+        </thead>
+        <tbody>
+          @for (customer of customers; track customer.id) {
+            <tr>
+              <td>{{ customer.id }}</td>
+              <td>{{ customer.name }}</td>
+              <td>{{ customer.email }}</td>
+              <td class="text-center">
+                <a [routerLink]="['/accounts']" [queryParams]="{ id: customer.id }"
+                   class="btn btn-sm btn-outline-info me-2">
+                  <i class="bi bi-credit-card me-1"></i>Accounts
+                </a>
+
+                @if (authService.isAdmin()) {
+                  <a [routerLink]="['/edit-customer', customer.id]"
+                     class="btn btn-sm btn-outline-warning me-2">
+                    <i class="bi bi-pencil-fill me-1"></i>Edit
+                  </a>
+                  <button class="btn btn-sm btn-outline-danger"
+                          (click)="deleteCustomer(customer)">
+                    <i class="bi bi-trash-fill me-1"></i>Delete
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-  </ng-container>
-  <ng-template #failureOrLading>
-    <ng-container *ngIf="errorMessage; else loading">
-      <div class="text-danger">
-        {{errorMessage}}
-      </div>
-    </ng-container>
-    <ng-template #loading>
-      Loading .....
-    </ng-template>
-  </ng-template>
+  } @else {
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i>No customers found.
+    </div>
+  }
 </div>
