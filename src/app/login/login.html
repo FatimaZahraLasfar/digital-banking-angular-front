@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="bank-logo">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="#0d6efd"/>
+          <path d="M20 8L32 15V17H8V15L20 8Z" fill="white"/>
+          <rect x="10" y="19" width="4" height="12" fill="white"/>
+          <rect x="18" y="19" width="4" height="12" fill="white"/>
+          <rect x="26" y="19" width="4" height="12" fill="white"/>
+          <rect x="8" y="31" width="24" height="3" fill="white"/>
+        </svg>
+      </div>
+      <h2 class="login-title">Digital Banking</h2>
+      <p class="login-subtitle">Sign in to your account</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+
+      @if (errorMessage) {
+        <div class="alert alert-danger" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errorMessage }}
+        </div>
+      }
+
+      <div class="mb-3">
+        <label for="username" class="form-label fw-semibold">Username</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+          <input
+            id="username"
+            type="text"
+            class="form-control"
+            formControlName="username"
+            placeholder="Enter your username"
+            [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+          />
+          @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+            <div class="invalid-feedback">Username is required.</div>
+          }
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label fw-semibold">Password</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          />
+          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <div class="invalid-feedback">Password must be at least 4 characters.</div>
+          }
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 py-2 fw-semibold"
+        [disabled]="loginForm.invalid || loading"
+      >
+        @if (loading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Signing in…
+        } @else {
+          <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+        }
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <small class="text-muted">
+        Demo: <strong>user1</strong> / <strong>admin</strong> — password: <strong>1234</strong>
+      </small>
+    </div>
+  </div>
+</div>
