@@ -1,34 +1,60 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold" routerLink="/customers">
+      <i class="bi bi-bank me-2"></i>Digital Banking
+    </a>
+
+    <button class="navbar-toggler" type="button"
+      data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/accounts">Accounts</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Customers
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="/customers">Search customers</a></li>
-            <li><a class="dropdown-item" routerLink="/new-customer">New customer</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-      </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <!-- Left links — only visible when logged in -->
+      @if (authService.isLoggedIn()) {
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/customers" routerLinkActive="active">
+              <i class="bi bi-people-fill me-1"></i>Customers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/accounts" routerLinkActive="active">
+              <i class="bi bi-credit-card-2-front-fill me-1"></i>Accounts
+            </a>
+          </li>
+          <!-- New Customer only visible to ADMIN -->
+          @if (authService.isAdmin()) {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/new-customer" routerLinkActive="active">
+                <i class="bi bi-person-plus-fill me-1"></i>New Customer
+              </a>
+            </li>
+          }
+        </ul>
+
+        <!-- Right: username + logout -->
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item me-3">
+            <span class="navbar-text text-white">
+              <i class="bi bi-person-circle me-1"></i>
+              <strong>{{ username }}</strong>
+              @if (authService.isAdmin()) {
+                <span class="badge bg-warning text-dark ms-2">Admin</span>
+              }
+            </span>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-outline-light btn-sm" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-1"></i>Logout
+            </button>
+          </li>
+        </ul>
+      }
+
     </div>
   </div>
 </nav>
