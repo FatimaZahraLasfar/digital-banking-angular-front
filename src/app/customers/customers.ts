@@ -1,63 +1,55 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Customer } from '../model/customer_model';
-import { CustomerService } from '../services/customer-service';
-import { AsyncPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../security/auth.service';
+import { environment } from '../../environments/environment';
+
+export interface Customer {
+  id: number;
+  name: string;
+  email: string;
+}
 
 @Component({
   selector: 'app-customers',
+  standalone: true,
+  imports: [RouterLink, FormsModule, CommonModule],
   templateUrl: './customers.html',
-  standalone : true,
-  styleUrls: ['./customers.css'],
-  imports: [AsyncPipe, ReactiveFormsModule],
+  styleUrl: './customers.css'
 })
-export class Customers implements OnInit {
-  customers!: Observable<Array<Customer>>;
-  errorMessage!: string;
-  searchFormGroup!: FormGroup;
+export class CustomersComponent implements OnInit {
+  customers: Customer[] = [];
+  searchKeyword = '';
 
   constructor(
-    private customerService: CustomerService,
-    private fb: FormBuilder,
-    private router: Router,
+    private http: HttpClient,
+    public authService: AuthService        // public → accessible in template
   ) {}
 
   ngOnInit(): void {
-    this.searchFormGroup = this.fb.group({
-      keyword: this.fb.control(''),
-    });
-    this.handleSearchCustomers();
+    this.loadCustomers();
   }
 
-  handleSearchCustomers() {
-    let kw = this.searchFormGroup?.value.keyword;
-    this.customers = this.customerService.searchCustomers(kw).pipe(
-      catchError((err) => {
-        this.errorMessage = err.message;
-        return throwError(err);
-      }),
-    );
+  loadCustomers(): void {
+    this.http.get<Customer[]>(`${environment.backendHost}/customers`)
+      .subscribe(data => this.customers = data);
   }
 
-  handleDeleteCustomer(c: Customer) {
-    let conf = confirm('Are you sure?');
-    if (!conf) return;
-    this.customerService.deleteCustomer(c.id).subscribe({
-      next: () => {
-        // ✅ Simply refresh the whole list
-        this.handleSearchCustomers();
-      },
-      error: (err) => {
-        console.log(err);
-        this.errorMessage = 'Failed to delete customer.';
-      },
-    });
+  searchCustomers(): void {
+    if (!this.searchKeyword.trim()) {
+      this.loadCustomers();
+      return;
+    }
+    this.http
+      .get<Customer[]>(`${environment.backendHost}/customers/search?keyword=${this.searchKeyword}`)
+      .subscribe(data => this.customers = data);
   }
 
-  handleCustomerAccounts(customer: Customer) {
-    this.router.navigateByUrl('/customer-accounts/' + customer.id, { state: customer });
+  deleteCustomer(customer: Customer): void {
+    if (!confirm(`Delete customer "${customer.name}"?`)) return;
+    this.http.delete(`${environment.backendHost}/customers/${customer.id}`)
+      .subscribe(() => this.loadCustomers());
   }
 }
